@@ -513,6 +513,7 @@ extern struct mm_struct init_mm;
 /* Pointer magic because the dynamic array size confuses some compilers. */
 static inline void mm_init_cpumask(struct mm_struct *mm)
 {
+  printk(KERN_INFO "David Kotaev: mm_init_cpumask(): mm_struct mm @ %p\n", mm);
 	unsigned long cpu_bitmap = (unsigned long)mm;
 
 	cpu_bitmap += offsetof(struct mm_struct, cpu_bitmap);

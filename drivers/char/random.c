@@ -1103,6 +1103,7 @@ struct timer_rand_state {
  */
 void add_device_randomness(const void *buf, unsigned int size)
 {
+  printk(KERN_INFO "David Kotaev: add_device_randomness(): void *buf @ %p, size = %d\n", buf, size);
 	unsigned long time = random_get_entropy() ^ jiffies;
 	unsigned long flags;
 

@@ -820,6 +820,7 @@ dump_kernel_offset(struct notifier_block *self, unsigned long v, void *p)
 
 void __init setup_arch(char **cmdline_p)
 {
+  printk(KERN_INFO "David Kotaev: setup_arch(): cmdline_p = %s\n", *cmdline_p);
 	memblock_reserve(__pa_symbol(_text),
 			 (unsigned long)__bss_stop - (unsigned long)_text);
 
