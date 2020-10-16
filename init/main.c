@@ -517,7 +517,7 @@ void david_show_buddy(void){
     spin_lock_irqsave(&zone->lock, flags);
     for (order = 0; order < MAX_ORDER; order++){
       struct free_area *area = &zone->free_area[order];
-      printk(KERN_CONT "\t%d", area->nr_free);
+      printk(KERN_CONT "  %d", area->nr_free);
     }
     spin_unlock_irqrestore(&zone->lock, flags);
     printk("\n");
