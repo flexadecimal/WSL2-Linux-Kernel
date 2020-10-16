@@ -3038,6 +3038,7 @@ int hugetlb_report_node_meminfo(int nid, char *buf)
 
 void hugetlb_show_meminfo(void)
 {
+  printk(KERN_INFO "David Kotaev: show_mem -> show_free_areas -> hugetlb_show_meminfo \n");
 	struct hstate *h;
 	int nid;
 

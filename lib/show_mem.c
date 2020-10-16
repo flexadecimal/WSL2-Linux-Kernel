@@ -11,6 +11,7 @@
 
 void show_mem(unsigned int filter, nodemask_t *nodemask)
 {
+  printk(KERN_INFO "David Kotaev: show_mem \n");
 	pg_data_t *pgdat;
 	unsigned long total = 0, reserved = 0, highmem = 0;
 

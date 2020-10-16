@@ -507,6 +507,23 @@ static inline void initcall_debug_enable(void)
 }
 #endif
 
+void david_show_buddy(void){
+  struct zone *zone;
+  // go through each zone
+  for_each_populated_zone(zone){
+    unsigned int order;
+    unsigned long flags = 0;
+    printk("Node %d, zone \t%s:", 0,  zone->name);
+    spin_lock_irqsave(&zone->lock, flags);
+    for (order = 0; order < MAX_ORDER; order++){
+      struct free_area *area = &zone->free_area[order];
+      printk(KERN_CONT "\t%d", area->nr_free);
+    }
+    spin_unlock_irqrestore(&zone->lock, flags);
+    printk("\n");
+  }
+}
+
 /*
  * Set up kernel memory allocators
  */
@@ -589,6 +606,11 @@ asmlinkage __visible void __init start_kernel(void)
 	trap_init();
 	mm_init();
 
+  /* hw 4*/
+  printk(KERN_INFO "David Kotaev: calling show_mem after mm_init in init/main.c \n");
+  show_mem(0, NULL);
+  printk(KERN_INFO "David Kotaev: calling david_show_buddy\n");
+  david_show_buddy();
 	ftrace_init();
 
 	/* trace_printk can be enabled here */

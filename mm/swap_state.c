@@ -97,6 +97,7 @@ static atomic_t swapin_readahead_hits = ATOMIC_INIT(4);
 
 void show_swap_cache_info(void)
 {
+  printk(KERN_INFO "David Kotaev: show_mem -> show_free_areas -> show_swap_cache_info \n");
 	printk("%lu pages in swap cache\n", total_swapcache_pages());
 	printk("Swap cache stats: add %lu, delete %lu, find %lu/%lu\n",
 		swap_cache_info.add_total, swap_cache_info.del_total,

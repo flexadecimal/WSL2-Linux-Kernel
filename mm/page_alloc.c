@@ -4812,6 +4812,7 @@ unsigned long nr_free_pagecache_pages(void)
 
 static inline void show_node(struct zone *zone)
 {
+  printk(KERN_INFO "David Kotaev: show_mem -> show_free_areas -> show_node \n");
 	if (IS_ENABLED(CONFIG_NUMA))
 		printk("Node %d ", zone_to_nid(zone));
 }
@@ -4919,6 +4920,7 @@ void si_meminfo_node(struct sysinfo *val, int nid)
  */
 static bool show_mem_node_skip(unsigned int flags, int nid, nodemask_t *nodemask)
 {
+  printk(KERN_INFO "David Kotaev: show_mem -> show_free_areas -> show_mem_node_skip \n");
 	if (!(flags & SHOW_MEM_FILTER_NODES))
 		return false;
 
@@ -4973,6 +4975,7 @@ static void show_migration_types(unsigned char type)
  */
 void show_free_areas(unsigned int filter, nodemask_t *nodemask)
 {
+  printk(KERN_INFO "David Kotaev: show_mem -> show_free_areas \n");
 	unsigned long free_pcp = 0;
 	int cpu;
 	struct zone *zone;
