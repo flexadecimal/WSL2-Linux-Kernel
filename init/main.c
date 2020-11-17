@@ -102,6 +102,15 @@
 #define CREATE_TRACE_POINTS
 #include <trace/events/initcall.h>
 
+// for hw6
+#include <linux/kernel.h>
+#include <linux/sched.h>
+#include <linux/sched/task.h>
+#include <linux/kthread.h>
+#include <linux/module.h>
+#include <linux/interrupt.h>
+#include <linux/smpboot.h>
+
 static int kernel_init(void *);
 
 extern void init_IRQ(void);
@@ -736,6 +745,10 @@ asmlinkage __visible void __init start_kernel(void)
 
 	/* Do the rest non-__init'ed, we're now alive */
 	rest_init();
+  
+  //david_mykthread_create_1();
+  // hw6: our stuff must be created here
+  //david_mykthread_create_2();
 }
 
 /* Call all constructor functions linked into the kernel. */
@@ -1055,6 +1068,71 @@ static inline void mark_readonly(void)
 }
 #endif
 
+
+#define CLONE_KERNEL (CLONE_FS | CLONE_FILES | CLONE_SIGHAND)
+static int david_mykthread_do_something_1(void *arg){
+  struct task_struct *curtask = current;
+  strcpy(curtask->comm, "David Kotaev: david_mykthread_do_something_1");
+  //set_task_state(curtask, TASK_RUNNING);
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_1 is about to be scheduled.\n");
+  schedule();
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_1 is now scheduled.\n");
+  return 0;
+}
+
+int david_mykthread_do_something_2(void *arg){
+  struct task_struct *curtask = current;
+  strcpy(curtask->comm, "David Kotaev: david_mykthread_do_something_2");
+  //set_task_state(curtask, TASK_RUNNING);
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_2 is about to be scheduled.\n");
+  schedule();
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_2 is now scheduled.\n");
+}
+
+static void david_mykthread_create_1(void){
+  int mypid;
+  printk(KERN_NOTICE "David Kotaev: Calling kernel_thread(david_mykthread_do_something_1)\n");
+  mypid = kernel_thread(david_mykthread_do_something_1, NULL, CLONE_KERNEL);
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_1 = %d\n", mypid);
+}
+
+static void david_mykthread_create_2(void){
+  int mypid;
+  printk(KERN_NOTICE "David Kotaev: Calling kernel_thread(david_mykthread_do_something_2)\n");
+  mypid = kernel_thread(david_mykthread_do_something_2, NULL, CLONE_KERNEL);
+  printk(KERN_NOTICE "David Kotaev: david_mykthread_do_something_2 = %d\n", mypid);
+}
+
+void my_softirqd_should_run(unsigned int cpu)
+{
+	local_softirq_pending();
+}
+
+static struct smp_hotplug_thread my_hotplug_threads = {
+  .store                  = &ksoftirqd,
+  .thread_fn              = my_softirqd_should_run,
+  .thread_comm            = "david_hotplugd/%u",
+};
+
+static __init int spawn_my_hotplug_threads(void){
+  BUG_ON(smpboot_register_percpu_thread(&my_hotplug_threads));
+  return 0;
+}
+
+static void run_my_hotplugd(unsigned int cpu) {
+  printk(KERN_NOTICE "David Kotaev: Running hotplug thread %d\n", cpu);
+  spawn_my_hotplug_threads();
+}
+
+static void david_processlist(void){
+  struct task_struct *tmp_tsk;
+  tmp_tsk = current;
+  for_each_process(tmp_tsk){
+    printk(KERN_NOTICE "Print process info \n");
+  }
+}
+
+
 static int __ref kernel_init(void *unused)
 {
 	int ret;
@@ -1078,6 +1156,8 @@ static int __ref kernel_init(void *unused)
 
 	rcu_end_inkernel_boot();
 
+  
+  
 	if (ramdisk_execute_command) {
 		ret = run_init_process(ramdisk_execute_command);
 		if (!ret)
@@ -1086,6 +1166,15 @@ static int __ref kernel_init(void *unused)
 		       ramdisk_execute_command, ret);
 	}
 
+  
+  
+  // hw6: spawn here
+  printk(KERN_INFO "David Kotaev: custom threads are created.\n");
+  david_mykthread_create_1();
+  david_mykthread_create_2();
+  printk(KERN_INFO "David Kotaev: creating hotplug threads \n");
+  run_my_hotplugd(1);
+  
 	/*
 	 * We try each of these until one succeeds.
 	 *
