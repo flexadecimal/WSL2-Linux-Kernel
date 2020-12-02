@@ -1031,6 +1031,7 @@ _ASM_NOKPROBE(\sym)
 END(\sym)
 .endm
 
+idtentry david_divide_error			do_david_divide_error			has_error_code=0
 idtentry divide_error			do_divide_error			has_error_code=0
 idtentry overflow			do_overflow			has_error_code=0
 idtentry bounds				do_bounds			has_error_code=0

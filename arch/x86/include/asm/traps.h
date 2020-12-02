@@ -10,6 +10,7 @@
 
 #define dotraplinkage __visible
 
+asmlinkage void david_divide_error(void);
 asmlinkage void divide_error(void);
 asmlinkage void debug(void);
 asmlinkage void nmi(void);
@@ -62,6 +63,7 @@ asmlinkage void xen_simd_coprocessor_error(void);
 #endif
 
 dotraplinkage void do_divide_error(struct pt_regs *, long);
+dotraplinkage void do_david_divide_error(struct pt_regs *, long);
 dotraplinkage void do_debug(struct pt_regs *, long);
 dotraplinkage void do_nmi(struct pt_regs *, long);
 dotraplinkage void do_int3(struct pt_regs *, long);
